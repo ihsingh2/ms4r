@@ -9,13 +9,18 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 
 gi.require_version('Gtk', '4.0')
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, Adw, GLib
 
 class SubredditTrends(Gtk.ScrolledWindow):
 
 	def __init__(self, reddit, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.reddit = reddit
+		self.style_manager = Adw.StyleManager()
+		self.style_manager.connect("notify::dark", self.on_appearance_change)
+		if (self.style_manager.get_dark()):
+			plt.style.use('dark_background')
+
 		self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 		self.set_child(self.box)
 
@@ -77,6 +82,12 @@ class SubredditTrends(Gtk.ScrolledWindow):
 			self.viewport.set_child(canvas)
 			self.spinner.stop()
 
+	def on_appearance_change(self, *args, **kwargs):
+		if (self.style_manager.get_dark()):
+			plt.style.use('dark_background')
+		else:
+			plt.style.use('default')
+
 	def active_users(self, home, days):
 		count = {}
 		for item in self.reddit.subreddit(home).comments(limit = 999):
@@ -109,7 +120,6 @@ class SubredditTrends(Gtk.ScrolledWindow):
 		for key in count.keys():
 			count[key] = len(count[key])
 
-		plt.style.use('dark_background')
 		fig = Figure(figsize = (5, 4), dpi = 100)
 		ax = fig.add_subplot()
 		ax.plot(list(count.keys()), list(count.values()))
@@ -132,7 +142,6 @@ class SubredditTrends(Gtk.ScrolledWindow):
 			except Exception as e:
 				print(e)
 
-		plt.style.use('dark_background')
 		fig = Figure(figsize = (5, 4), dpi = 100)
 		ax = fig.add_subplot()
 		ax.plot(list(count.keys()), list(count.values()))
@@ -155,7 +164,6 @@ class SubredditTrends(Gtk.ScrolledWindow):
 			except Exception as e:
 				print(e)
 
-		plt.style.use('dark_background')
 		fig = Figure(figsize = (5, 4), dpi = 100)
 		ax = fig.add_subplot()
 		ax.plot(list(count.keys()), list(count.values()))
@@ -182,7 +190,6 @@ class SubredditTrends(Gtk.ScrolledWindow):
 				print(e)
 
 		vals = np.array(list(count.values()))
-		plt.style.use('dark_background')
 		fig = Figure(figsize = (5, 4), dpi = 100)
 		ax = fig.add_subplot()
 		ax.plot(list(count.keys()), vals[:, 0], label='max_score')
@@ -233,7 +240,6 @@ class SubredditTrends(Gtk.ScrolledWindow):
 				print(e)
 
 		vals = np.array(list(count.values()))
-		plt.style.use('dark_background')
 		fig = Figure(figsize = (5, 4), dpi = 100)
 		ax = fig.add_subplot()
 		ax.plot(list(count.keys()), vals[:, 0], label = 'is_original_content')
@@ -270,7 +276,6 @@ class SubredditTrends(Gtk.ScrolledWindow):
 			except Exception as e:
 				print(e)
 
-		plt.style.use('dark_background')
 		fig = Figure(figsize = (5, 4), dpi = 100)
 		ax = fig.add_subplot()
 		for flair in count.columns:
@@ -307,7 +312,6 @@ class SubredditTrends(Gtk.ScrolledWindow):
 			except Exception as e:
 				print(e)
 
-		plt.style.use('dark_background')
 		fig = Figure(figsize = (5, 4), dpi = 100)
 		ax = fig.add_subplot()
 		ax.plot(list(count.keys()), list(count.values()))

@@ -256,5 +256,5 @@ class MyApp(Adw.Application):
 			traceback.print_exc()
 			exit()
 
-app = MyApp(application_id="com.example.GtkApplication")
+app = MyApp(application_id="com.github.ihsingh2.ms4r")
 app.run(sys.argv)
